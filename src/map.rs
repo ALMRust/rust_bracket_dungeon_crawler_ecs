@@ -17,13 +17,22 @@ impl Map {
         }
     }
 
-    pub fn render(&self, ctx: &mut BTerm) {
-        for y in 0..SCREEN_HEIGHT {
-            for x in 0..SCREEN_WIDTH {
-                let idx = map_idx(x, y);
-                match self.tiles[idx] {
-                    TileType::Floor => ctx.set(x, y, YELLOW, BLACK, to_cp437('.')),
-                    TileType::Wall => ctx.set(x, y, GREEN, BLACK, to_cp437('#')),
+    pub fn render(&self, ctx: &mut BTerm, camera: &Camera) {
+        let Camera {
+            top_y,
+            bottom_y,
+            left_x,
+            right_x
+        } = *camera;
+        ctx.set_active_console(0);
+        for y in top_y..bottom_y {
+            for x in left_x..right_x {
+                if self.in_bounds(Point::new(x, y)) {
+                    let idx = map_idx(x, y);
+                    match self.tiles[idx] {
+                        TileType::Floor => ctx.set(x - left_x, y - top_y, WHITE, BLACK, to_cp437('.')),
+                        TileType::Wall => ctx.set(x - left_x, y - top_y, WHITE, BLACK, to_cp437('#')),
+                    }
                 }
             }
         }
@@ -31,7 +40,7 @@ impl Map {
 
     pub fn in_bounds(&self, point: Point) -> bool {
         point.x >= 0 && point.x < SCREEN_WIDTH
-            && point.y < SCREEN_HEIGHT
+            && point.y >= 0 && point.y < SCREEN_HEIGHT
     }
 
     pub fn can_enter_tile(&self, point: Point) -> bool {

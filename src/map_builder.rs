@@ -22,7 +22,7 @@ impl MapBuilder {
         };
         mb.fill(TileType::Wall);
         mb.build_random_rooms(rng);
-        mb.build_orridors(rng);
+        mb.build_corridors(rng);
         mb.player_start = mb.rooms[0].center();
         mb
     }
@@ -43,7 +43,7 @@ impl MapBuilder {
         }
     }
 
-    fn build_orridors(&mut self, rng: &mut RandomNumberGenerator) {
+    fn build_corridors(&mut self, rng: &mut RandomNumberGenerator) {
         let mut rooms = self.rooms.clone();
         rooms.sort_by(|a, b| a.center().x.cmp(&b.center().x));
 
