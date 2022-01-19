@@ -47,17 +47,23 @@ pub fn player_input(
                 });
 
             if !hit_something {
-                did_something = true;
-                commands
-                    .push(((), WantsToMove { entity: player_entity, destination }));
+                commands.push((
+                    (),
+                    WantsToMove {
+                        entity: player_entity,
+                        destination,
+                    },
+                ));
             }
         }
 
         if !did_something {
             if let Ok(mut health) = ecs
-                .entry_mut(player_entity).unwrap().get_component_mut::<Health>()
+                .entry_mut(player_entity)
+                .unwrap()
+                .get_component_mut::<Health>()
             {
-                health.current = i32::min(health.max, health.current+1);
+                health.current = i32::min(health.max, health.current + 1);
             }
         }
         *turn_state = TurnState::PlayerTurn;
